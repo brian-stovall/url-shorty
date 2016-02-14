@@ -7,7 +7,7 @@ var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/short
 
 //accepts a number and returns a url if one exists, or false if not
 exports.fetch = function(num, callback) {
-	return mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
+	return mongo.connect (connectData, function (err, db) {
 		var retval;
 		var collection = db.collection('urls');
 		collection.find({'short_url': appDir + num}).toArray( (err, docs) => {
@@ -22,7 +22,7 @@ exports.fetch = function(num, callback) {
 
 //makes a new entry for a url if it doesn't already exist
 exports.make = function(url, callback) {
-	mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
+	mongo.connect (connectData, function (err, db) {
 		var collection = db.collection('urls');
 		var retval;
 		return collection.count( {}, (err, count) => {
