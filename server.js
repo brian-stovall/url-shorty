@@ -7,7 +7,7 @@ var dbDo = require('./dbDo');
 
 //the url of the service
 var appDir = 'https://urlsmall.herokuapp.com/';
-var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/shorty/';
+var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/shorty';
 
 var app = express();
 

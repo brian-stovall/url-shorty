@@ -3,7 +3,7 @@
 
 var mongo = require('mongodb').MongoClient;
 var appDir = 'https://urlsmall.herokuapp.com/';
-var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/shorty/';
+var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/shorty';
 
 //accepts a number and returns a url if one exists, or false if not
 exports.fetch = function(num, callback) {
