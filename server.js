@@ -20,15 +20,16 @@ mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
 	
 app.use('/', express.static(path.join(__dirname, 'public')));
 
-app.get(/(^http?s*\.*)/, (request, response) => {
-	var returnValue = request.params.toString();
+app.get(/\/new\/(http[s]?:\/\/.+\..+)/, (request, response) => {
+	var returnValue = request.params[0].toString();
 	
 	//set up response header and send data
 	response.setHeader('Content-Type', 'application/json');
-	response.write(returnValue, (err) => {response.send();});
+	response.write(JSON.stringify({'original_url': returnValue,
+		                             'short_url': null }), (err) => {response.send();});
 });
 
-app.use( (request, response) => {
+app.use((request, response) => {
 	response.write('error: invalid url', (err) => {response.send();});
 });
 
