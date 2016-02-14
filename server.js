@@ -20,6 +20,8 @@ mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
 	
 app.use('/', express.static(path.join(__dirname, 'public')));
 
+//handle calls to /new with good urls (per spec: http(s):// at least one char
+//followed by at least one dot, followed by at least one char
 app.get(/\/new\/(http[s]?:\/\/.+\..+)/, (request, response) => {
 	var returnValue = request.params[0].toString();
 	
@@ -29,10 +31,29 @@ app.get(/\/new\/(http[s]?:\/\/.+\..+)/, (request, response) => {
 		                             'short_url': null }), (err) => {response.send();});
 });
 
-app.use((request, response) => {
-	response.write('error: invalid url', (err) => {response.send();});
+//handle calls to /new with bad urls
+app.get(/\/new\/(?!http[s]?:\/\/.+\..+)/, (request, response) => {
+	response.setHeader('Content-Type', 'application/json');
+	response.write(JSON.stringify({'error': 'url invalid'}), (err) => {response.send();});
 });
 
+//handle calls to /list by displaying the db contents
+app.get('/list', (request, response) => {
+	mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
+		var collection = db.collection('urls');
+		collection.find({}, {'original_url':1, 'short_url':1, _id:0}).
+			toArray( (err, docs) => {
+			response.setHeader('Content-Type', 'application/json');
+			for (var i = 0; i < docs.length; i++)
+				response.write(JSON.stringify(docs[i]) + '\n\n');
+			response.send();
+			db.close();
+		});
+	});
+});
+
+//catch-all for bad addresses that redirects to instruction page
+app.use(/.+/, express.static(path.join(__dirname, 'public')));
 
 app.listen(process.env.PORT || '8080');
 console.log('URL shortener service listening on port 8080');
