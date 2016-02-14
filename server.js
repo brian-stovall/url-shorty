@@ -6,7 +6,8 @@ var mongo = require('mongodb').MongoClient;
 var dbDo = require('./dbDo');
 
 //the url of the service
-var appDir = 'https://shorty.herokuapp.com/';
+var appDir = 'https://urlsmall.herokuapp.com/';
+var connectData = 'mongodb://shorty:dreamtime3@ds035735.mongolab.com:35735/shorty/';
 
 var app = express();
 
@@ -36,7 +37,7 @@ app.get(/\/new\/(?!http[s]?:\/\/.+\..+)/, (request, response) => {
 
 //handle calls to /list by displaying the db contents
 app.get('/list', (request, response) => {
-	mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
+	mongo.connect (connectData, function (err, db) {
 		var collection = db.collection('urls');
 		collection.find({}, {'original_url':1, 'short_url':1, _id:1}).
 			toArray( (err, docs) => {
