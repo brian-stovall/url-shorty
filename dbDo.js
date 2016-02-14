@@ -10,9 +10,10 @@ exports.fetch = function(num, callback) {
 	return mongo.connect ('mongodb://localhost:27017/urlShortener', function (err, db) {
 		var retval;
 		var collection = db.collection('urls');
-		collection.find({'short_url': num}).toArray( (err, docs) => {
-			if (docs.length) retval = JSON.strigify(docs[0]._id);
-			else retval = 'false';
+		collection.find({'short_url': appDir + num}).toArray( (err, docs) => {
+			console.log('looking for ' + appDir + num + ', counted ' + docs.length);
+			if (docs.length) retval = docs[0]._id;
+			else retval = 'Error: No shortened URL found at ' + num + '.';
 			callback(retval);
 			db.close();
 		});

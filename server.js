@@ -16,12 +16,6 @@ function writeJSON (stream, data) {
 	stream.write( JSON.stringify(data),
 			(err) => {if (err) console.log(err); stream.send()});
 }
-
-function writeString (stream, data) {
-	stream.setHeader('Content-Type', 'application/json');
-	stream.write( data,
-			(err) => {if (err) console.log(err); stream.send()});
-}
 	
 app.use('/', express.static(path.join(__dirname, 'public')));
 
@@ -57,8 +51,17 @@ app.get('/list', (request, response) => {
 
 //handle shortened url requests
 app.get('/:num', (request, response) => {
-	var shortWrite = writeString.bind(null, response);
-	dbDo.fetch(request.params.num, shortWrite);
+	//function that handles responses from dbDo.fetch
+	function shortRedirect(data) {
+		//try to redirect if data is a valid url
+		if (data.match(/http[s]?:\/\/.+\..+/)) {
+			//response.statusCode = 302;
+			//response.setHeader("Location", data);
+			response.redirect(data);
+		} else //otherwise send the data (error message)
+			response.send(data);
+	}
+	dbDo.fetch(request.params.num, shortRedirect);
 });
 
 //catch-all for bad addresses that redirects to instruction page
